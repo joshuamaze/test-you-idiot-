@@ -1,6 +1,6 @@
 {
-  "name": "Nexus | Next-Gen Productivity",
-  "description": "A high-performance landing page with an integrated AI consultant.",
+  "name": "Nexus Landing Page",
+  "description": "High-performance SaaS landing page with integrated Gemini AI Consultant.",
   "requestFramePermissions": [
     "microphone"
   ]
