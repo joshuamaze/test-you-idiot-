@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { 
   Zap, 
   Search, 
@@ -17,7 +17,10 @@ import {
   Linkedin,
   X,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Cpu,
+  Globe,
+  Lock
 } from 'lucide-react';
 
 // --- AI SERVICE ---
@@ -33,11 +36,12 @@ const getAIResponse = async function* (prompt: string) {
     });
 
     for await (const chunk of response) {
-      if (chunk.text) yield chunk.text;
+      const c = chunk as GenerateContentResponse;
+      if (c.text) yield c.text;
     }
   } catch (error) {
     console.error("Gemini API Error:", error);
-    yield "Connection to AI engine timed out. Please check your network or API configuration.";
+    yield "I'm having trouble connecting to my neural network. Please check your API key.";
   }
 };
 
@@ -60,12 +64,11 @@ const Navbar = () => {
           </div>
           <span className="text-xl font-bold tracking-tighter text-slate-900 uppercase">Nexus</span>
         </div>
-        <div className="hidden md:flex items-center gap-10">
-          {['Features', 'Pricing', 'Docs'].map(item => (
-            <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-semibold text-slate-500 hover:text-indigo-600 transition-colors">{item}</a>
-          ))}
-          <button className="bg-slate-900 text-white px-7 py-2.5 rounded-full text-sm font-bold hover:bg-indigo-600 transition-all active:scale-95 shadow-xl shadow-slate-200">
-            Launch Platform
+        <div className="hidden md:flex items-center gap-10 text-sm font-semibold">
+          <a href="#features" className="text-slate-500 hover:text-indigo-600 transition-colors">Features</a>
+          <a href="#pricing" className="text-slate-500 hover:text-indigo-600 transition-colors">Pricing</a>
+          <button className="bg-slate-900 text-white px-7 py-2.5 rounded-full hover:bg-indigo-600 transition-all active:scale-95 shadow-xl shadow-slate-200">
+            Get Started
           </button>
         </div>
       </div>
@@ -79,14 +82,14 @@ const Hero = () => (
     <div className="max-w-7xl mx-auto px-6 text-center">
       <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-10 bg-white border border-slate-200 rounded-full shadow-sm">
         <Sparkles size={14} className="text-indigo-600" />
-        <span className="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em]">Deploy with confidence</span>
+        <span className="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em]">Deploying Excellence</span>
       </div>
       <h1 className="text-6xl md:text-[92px] font-extrabold tracking-tighter text-slate-900 mb-10 leading-[0.95]">
         The Operating System for <br />
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">Modern Teamwork.</span>
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">High-Output Teams.</span>
       </h1>
       <p className="max-w-2xl mx-auto text-xl text-slate-500 mb-14 leading-relaxed font-medium">
-        Nexus replaces fragmented workflows with one lightning-fast, AI-native interface. Built for teams who refuse to compromise on speed.
+        Nexus replaces fragmented legacy tools with one lightning-fast, AI-native interface. Built for builders who refuse to compromise on velocity.
       </p>
       <div className="flex flex-col sm:flex-row justify-center gap-6 mb-24">
         <button className="px-12 py-5 bg-indigo-600 text-white rounded-2xl font-bold shadow-2xl shadow-indigo-200 hover:bg-indigo-700 hover:-translate-y-1 transition-all active:scale-95 text-lg flex items-center gap-3 justify-center">
@@ -109,9 +112,9 @@ const Features = () => {
   const items = [
     { title: "Edge Synchronization", desc: "Collaborate globally with sub-50ms latency powered by our distributed engine.", icon: <Zap className="text-amber-500" /> },
     { title: "Semantic Search", desc: "Find anything across docs, tasks, and chats using our advanced NLP indexing.", icon: <Search className="text-indigo-500" /> },
-    { title: "Military Encryption", desc: "AES-256 at rest and TLS 1.3 in transit. Your intellectual property is safe.", icon: <ShieldCheck className="text-green-500" /> },
+    { title: "Military Encryption", desc: "AES-256 at rest and TLS 1.3 in transit. Your intellectual property is safe.", icon: <Lock className="text-green-500" /> },
     { title: "Neural Chat", desc: "Native team discussions that understand context and summarize long threads.", icon: <MessageSquare className="text-pink-500" /> },
-    { title: "Visual Logic", desc: "Build powerful automations with an intuitive node-based editor. No code required.", icon: <Layers className="text-violet-500" /> },
+    { title: "Visual Logic", desc: "Build powerful automations with an intuitive node-based editor. No code required.", icon: <Cpu className="text-violet-500" /> },
     { title: "Unified SDK", desc: "Extend Nexus with a single powerful API. Fully documented for developers.", icon: <Code2 className="text-slate-700" /> },
   ];
 
@@ -119,7 +122,7 @@ const Features = () => {
     <section id="features" className="py-32 bg-slate-50">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-24">
-          <h2 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em] mb-4">Core Infrastructure</h2>
+          <h2 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em] mb-4">Architecture</h2>
           <p className="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight">Engineered for Peak <br/> Performance.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -141,7 +144,7 @@ const Features = () => {
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{role: 'user' | 'model', text: string}[]>([
-    { role: 'model', text: 'Welcome to the future of workspace. I am Nexus Assistant. How can I help you today?' }
+    { role: 'model', text: 'Welcome. I am Nexus Assistant. How can I help you transform your workflow today?' }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -182,7 +185,7 @@ const ChatBot = () => {
               <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center font-bold text-xl"><MessageSquare size={20} /></div>
               <div>
                 <span className="font-bold block tracking-tight">Nexus AI</span>
-                <span className="text-[10px] text-indigo-300 font-bold uppercase tracking-widest">Enterprise Support</span>
+                <span className="text-[10px] text-indigo-300 font-bold uppercase tracking-widest">Active Assistant</span>
               </div>
             </div>
             <button onClick={() => setIsOpen(false)} className="hover:bg-slate-800 p-2 rounded-xl transition-all">
@@ -193,7 +196,7 @@ const ChatBot = () => {
             {messages.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] px-6 py-4 rounded-[1.8rem] text-[15px] leading-relaxed ${m.role === 'user' ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100' : 'bg-white border border-slate-200 text-slate-700 shadow-sm'}`}>
-                  {m.text || (isTyping && i === messages.length - 1 ? 'Nexus is drafting a response...' : '')}
+                  {m.text || (isTyping && i === messages.length - 1 ? 'Typing...' : '')}
                 </div>
               </div>
             ))}
@@ -204,10 +207,10 @@ const ChatBot = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Message Nexus Assistant..."
+              placeholder="Ask me anything..."
               className="flex-1 bg-slate-100 border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-indigo-500 transition-all outline-none font-medium"
             />
-            <button onClick={handleSend} disabled={isTyping} className="bg-indigo-600 text-white px-6 py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-all disabled:opacity-50 shadow-lg shadow-indigo-100">
+            <button onClick={handleSend} disabled={isTyping} className="bg-indigo-600 text-white px-6 py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-all disabled:opacity-50">
               Send
             </button>
           </div>
@@ -215,10 +218,9 @@ const ChatBot = () => {
       ) : (
         <button 
           onClick={() => setIsOpen(true)}
-          className="w-18 h-18 px-6 py-6 bg-slate-900 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all group relative overflow-hidden"
+          className="w-16 h-16 bg-slate-900 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all group"
         >
-          <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600 to-violet-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <MessageSquare size={28} className="relative z-10" strokeWidth={2.5} />
+          <MessageSquare size={28} />
         </button>
       )}
     </div>
@@ -229,87 +231,41 @@ const Pricing = () => (
   <section id="pricing" className="py-32 bg-white">
     <div className="max-w-7xl mx-auto px-6">
       <div className="text-center mb-24">
-        <h2 className="text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">Straightforward Pricing.</h2>
-        <p className="text-slate-500 text-xl max-w-2xl mx-auto font-medium">Build, scale, and thrive without worrying about seat-based costs.</p>
+        <h2 className="text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">Fair Pricing for Builders.</h2>
+        <p className="text-slate-500 text-xl max-w-2xl mx-auto font-medium">No hidden fees. Just elite software for elite teams.</p>
       </div>
       <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
         <div className="p-16 rounded-[4rem] border border-slate-100 bg-slate-50 flex flex-col justify-between hover:border-slate-200 transition-all">
           <div>
-            <h3 className="text-2xl font-bold mb-4">Start Tier</h3>
-            <p className="text-slate-500 mb-10 text-lg">Essential tools for individual builders.</p>
+            <h3 className="text-2xl font-bold mb-4 tracking-tight">Starter</h3>
+            <p className="text-slate-500 mb-10 text-lg leading-relaxed">Everything you need to get moving.</p>
             <div className="text-7xl font-black mb-12">$0<span className="text-xl font-medium text-slate-400">/mo</span></div>
             <ul className="space-y-5 mb-14 text-slate-600 font-medium">
               <li className="flex items-center gap-4"><CheckCircle2 className="text-green-500" size={18} /> Up to 5 projects</li>
-              <li className="flex items-center gap-4"><CheckCircle2 className="text-green-500" size={18} /> 10GB Data transfer</li>
-              <li className="flex items-center gap-4"><CheckCircle2 className="text-green-500" size={18} /> Standard AI access</li>
+              <li className="flex items-center gap-4"><CheckCircle2 className="text-green-500" size={18} /> Basic automations</li>
+              <li className="flex items-center gap-4"><CheckCircle2 className="text-green-500" size={18} /> Community support</li>
             </ul>
           </div>
           <button className="w-full py-5 bg-white border border-slate-200 rounded-2xl font-bold text-xl hover:bg-slate-100 transition-all shadow-sm">Get Started</button>
         </div>
         <div className="p-16 rounded-[4rem] border-2 border-indigo-600 bg-white shadow-[0_40px_100px_-20px_rgba(79,70,229,0.15)] relative overflow-hidden flex flex-col justify-between">
-          <div className="absolute top-10 right-10 bg-indigo-600 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">Growth Pick</div>
+          <div className="absolute top-10 right-10 bg-indigo-600 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">Velocity</div>
           <div>
-            <h3 className="text-2xl font-bold mb-4">Velocity Tier</h3>
-            <p className="text-slate-500 mb-10 text-lg">Built for high-performance teams.</p>
-            <div className="text-7xl font-black mb-12">$79<span className="text-xl font-medium text-slate-400">/mo</span></div>
+            <h3 className="text-2xl font-bold mb-4 tracking-tight">Professional</h3>
+            <p className="text-slate-500 mb-10 text-lg leading-relaxed">For teams that ship daily.</p>
+            <div className="text-7xl font-black mb-12">$49<span className="text-xl font-medium text-slate-400">/mo</span></div>
             <ul className="space-y-5 mb-14 text-slate-700 font-medium">
               <li className="flex items-center gap-4 text-indigo-600 font-bold"><CheckCircle2 size={18} /> Unlimited seats</li>
-              <li className="flex items-center gap-4 text-indigo-600 font-bold"><CheckCircle2 size={18} /> Unlimited AI workflows</li>
-              <li className="flex items-center gap-4"><CheckCircle2 className="text-green-500" size={18} /> RBAC & SSO support</li>
-              <li className="flex items-center gap-4"><CheckCircle2 className="text-green-500" size={18} /> Enterprise SLA</li>
+              <li className="flex items-center gap-4 text-indigo-600 font-bold"><CheckCircle2 size={18} /> Neural Workflow Co-pilot</li>
+              <li className="flex items-center gap-4"><CheckCircle2 className="text-green-500" size={18} /> SSO & SSO Support</li>
+              <li className="flex items-center gap-4"><CheckCircle2 className="text-green-500" size={18} /> 24/7 Priority SLA</li>
             </ul>
           </div>
-          <button className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-bold text-xl hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95">Upgrade to Velocity</button>
+          <button className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-bold text-xl hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95">Go Professional</button>
         </div>
       </div>
     </div>
   </section>
-);
-
-const Footer = () => (
-  <footer className="bg-slate-900 text-slate-500 py-32 border-t border-slate-800">
-    <div className="max-w-7xl mx-auto px-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-20 mb-24 text-left">
-        <div className="col-span-1 md:col-span-1">
-          <div className="flex items-center gap-3 mb-10">
-            <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-white font-bold"><Layers size={20} /></div>
-            <span className="text-white font-bold text-2xl tracking-tighter">NEXUS</span>
-          </div>
-          <p className="text-lg leading-relaxed text-slate-400">The high-performance operating system for the next generation of giants. Speed is our religion.</p>
-        </div>
-        <div>
-          <h4 className="text-white font-bold mb-10 uppercase tracking-[0.3em] text-xs">Product</h4>
-          <ul className="space-y-6 font-medium">
-            <li><a href="#" className="hover:text-white transition-colors">Core Engine</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Visual Logic</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Neural Sync</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="text-white font-bold mb-10 uppercase tracking-[0.3em] text-xs">Community</h4>
-          <ul className="space-y-6 font-medium">
-            <li className="flex items-center gap-3"><Twitter size={16} /> <a href="#" className="hover:text-white transition-colors">X (Twitter)</a></li>
-            <li className="flex items-center gap-3"><Github size={16} /> <a href="#" className="hover:text-white transition-colors">Engineering</a></li>
-            <li className="flex items-center gap-3"><Linkedin size={16} /> <a href="#" className="hover:text-white transition-colors">LinkedIn</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="text-white font-bold mb-10 uppercase tracking-[0.3em] text-xs">Platform</h4>
-          <ul className="space-y-6 font-medium">
-            <li><a href="#" className="hover:text-white transition-colors">Privacy</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-          </ul>
-        </div>
-      </div>
-      <div className="pt-16 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-10 text-sm tracking-wide">
-        <p>&copy; 2024 Nexus Technologies International. All rights reserved.</p>
-        <div className="flex gap-10 items-center">
-          <span className="flex items-center gap-2 font-bold text-indigo-400"><div className="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(99,102,241,1)]"></div> INFRASTRUCTURE ONLINE</span>
-        </div>
-      </div>
-    </div>
-  </footer>
 );
 
 const App = () => (
@@ -320,12 +276,12 @@ const App = () => (
     {/* Trust Section */}
     <section className="py-24 bg-white border-y border-slate-100 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
-        <p className="text-center text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] mb-16">Trusted by the engineers of the future</p>
-        <div className="flex flex-wrap justify-center items-center gap-16 md:gap-32 opacity-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700">
-          <span className="text-4xl font-black italic tracking-tighter uppercase">Solaris</span>
-          <span className="text-4xl font-black tracking-widest uppercase">Orbit</span>
-          <span className="text-4xl font-black italic tracking-tighter uppercase">Pulse</span>
-          <span className="text-4xl font-black tracking-widest uppercase">Vortex</span>
+        <p className="text-center text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] mb-16">Powering the builders of tomorrow</p>
+        <div className="flex flex-wrap justify-center items-center gap-16 md:gap-32 opacity-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700 font-black text-4xl italic uppercase tracking-tighter">
+          <span>Aether</span>
+          <span>Quantos</span>
+          <span>Prism</span>
+          <span>Vertex</span>
         </div>
       </div>
     </section>
@@ -334,19 +290,55 @@ const App = () => (
     <Pricing />
     
     {/* CTA Block */}
-    <section className="py-32 bg-indigo-600 text-white relative overflow-hidden">
+    <section className="py-32 bg-indigo-600 text-white relative overflow-hidden text-center">
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-900/40 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2"></div>
-      <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-        <h2 className="text-5xl md:text-8xl font-extrabold mb-12 tracking-tighter leading-[0.9]">Stop fighting tools. <br/> Start shipping.</h2>
+      <div className="max-w-4xl mx-auto px-6 relative z-10">
+        <h2 className="text-5xl md:text-8xl font-extrabold mb-12 tracking-tighter leading-[0.9]">Ship faster. <br/> Together.</h2>
         <div className="flex flex-col sm:flex-row justify-center gap-8">
-          <button className="px-14 py-6 bg-white text-indigo-600 rounded-3xl font-bold text-2xl hover:bg-indigo-50 transition-all shadow-2xl hover:scale-105 active:scale-95">Claim Free Access</button>
-          <button className="px-14 py-6 bg-indigo-500/50 text-white rounded-3xl font-bold text-2xl border border-indigo-400/30 hover:bg-indigo-500 transition-all">Talk to Founders</button>
+          <button className="px-14 py-6 bg-white text-indigo-600 rounded-3xl font-bold text-2xl hover:bg-indigo-50 transition-all shadow-2xl">Get Free Access</button>
+          <button className="px-14 py-6 bg-indigo-500/50 text-white rounded-3xl font-bold text-2xl border border-indigo-400/30 hover:bg-indigo-500 transition-all">Talk to Sales</button>
         </div>
       </div>
     </section>
 
-    <Footer />
+    <footer className="bg-slate-900 text-slate-500 py-32 border-t border-slate-800">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-20 mb-24">
+          <div className="col-span-1">
+            <div className="flex items-center gap-3 mb-10">
+              <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-white font-bold"><Layers size={20} /></div>
+              <span className="text-white font-bold text-2xl tracking-tighter uppercase">Nexus</span>
+            </div>
+            <p className="text-lg leading-relaxed text-slate-400">The high-performance OS for modern teams. Built for speed.</p>
+          </div>
+          <div>
+            <h4 className="text-white font-bold mb-10 uppercase tracking-[0.3em] text-xs">Product</h4>
+            <ul className="space-y-6 font-medium">
+              <li><a href="#" className="hover:text-white transition-colors">Core Engine</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Neural Sync</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-white font-bold mb-10 uppercase tracking-[0.3em] text-xs">Community</h4>
+            <ul className="space-y-6 font-medium flex flex-col">
+              <a href="#" className="hover:text-white transition-colors">Twitter</a>
+              <a href="#" className="hover:text-white transition-colors">Discord</a>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-white font-bold mb-10 uppercase tracking-[0.3em] text-xs">Platform</h4>
+            <ul className="space-y-6 font-medium">
+              <li><a href="#" className="hover:text-white transition-colors">Privacy</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="pt-16 border-t border-slate-800 flex justify-between items-center text-sm">
+          <p>&copy; 2024 Nexus Technologies. All rights reserved.</p>
+          <span className="flex items-center gap-2 font-bold text-indigo-400"><div className="w-2.5 h-2.5 bg-indigo-500 rounded-full"></div> SYSTEMS NOMINAL</span>
+        </div>
+      </div>
+    </footer>
     <ChatBot />
   </div>
 );
@@ -355,6 +347,4 @@ const App = () => (
 const root = document.getElementById('root');
 if (root) {
   createRoot(root).render(<App />);
-} else {
-  console.error("DOM Root Element missing.");
 }
