@@ -1,3 +1,5 @@
+// Added React import to provide namespace for React.ReactNode
+import React from 'react';
 
 export interface Feature {
   id: string;
